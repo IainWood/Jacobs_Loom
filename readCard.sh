@@ -13,15 +13,14 @@ do
                 exit 0
 
         clear
-        num="$(echo "$data"|cut -d\B -f2|cut -d\^ -f1)"
-        name="$(echo "$data"|cut -d\^ -f2)"
-        lname="$(echo "$name"|cut -d\/ -f1)"
-        fname="$(echo "$name"|cut -d\/ -f2)"
-        exdate="$(echo "$data"|cut -d\^ -f3)"
-        exdate="{exdate:0:2}/S{:2:2}"
+        num="$(echo "$data"|cut -d\% -f2|cut -d\\n -f1)"
+        track1="$echo "$data"|cut -d\% -f2|cut -d\? -f2)"
+        track2="$echo "$data"|cut -d\; -f2|cut -d\? -f2)"
+        track3="$echo "$data"|cut -d\+ -f2|cut -d\? -f2)"
 
-        echo "Card Number: $num"
-        echo "Card Holder: $fname $lname"
-        echo "Experation Date: $exdate"
+        echo "FULL LINE: $num"
+        echo "Track 1: $track1"
+        echo "Track 2: $track2"
+        echo "Track 3: $track3"
         echo "-------------------------------"
 done
