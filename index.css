@@ -1,0 +1,26 @@
+@import "https://fonts.googleapis.com/css?family=Roboto+Slab";
+/* The Above Line Is To Import Google Font Style */
+body{
+  background-image: url(images/Background_Light.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Roboto Slab', serif;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.titanic{
+  float: none;
+}
+table, th, td {
+    text-align: left;
+    border: none
+}
+th, td {
+    padding: 7px;
+}
+tr:hover{background-color:#f7f7f7}
+a{
+  text-decoration: none;
+}
