@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--Adds the icon to the tab-->
+  <link rel="icon" href="favicon.ico" sizes="16x16">
+</head>
+<body>
+<title>Index</title>
+<script>
+  // a key map of allowed keys
+  var allowedKeys = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down',
+    65: 'a',
+    66: 'b'
+  };
+
+  //Konami Code sequence
+  var konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'a', 'b'];
+
+  // a variable to remember the 'position' the user has reached so far.
+  var konamiCodePosition = 0;
+
+  // add keydown event listener
+  document.addEventListener('keydown', function(e) {
+    // get the value of the key code from the key map
+    var key = allowedKeys[e.keyCode];
+    // get the value of the required key from the konami code
+    var requiredKey = konamiCode[konamiCodePosition];
+
+    // compare the key with the required key
+    if (key == requiredKey) {
+
+      // move to the next key in the konami code sequence
+      konamiCodePosition++;
+
+      // if the last key is reached, activate cheats
+      if (konamiCodePosition == konamiCode.length)
+        activateCheats();
+    } else
+      konamiCodePosition = 0;
+  });
+
+  function activateCheats() {
+    document.body.style.backgroundImage = "url('gradius.jpg')";
+  }
+</script>
+<link href="CSS/index.css" rel="stylesheet">
+<div style="overflow-x:auto">
+<table>
+  <tr>
+    <th>Page</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/Login%20Page.php">Login Page.php</a></td>
+    <td>Login page for the whole site, will eventually be the page that is linked to</td>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/New%20Employee.php">New Employee.php</a></td>
+    <td>Inserts a new employee into the database</td>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/Fetch%20Employee.php">Fetch Employee.php</a></td>
+    <td>Retrieve information on an employee from the database</td>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/New%20Inventory%20Item.php">New Inventory Item.php</a></td>
+    <td>Inserts a new inventory item to the database</td>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/New%20Wholesale%20Customer.php">New Wholesale Customer.php</td>
+    <td>Inserts a new wholesale customer into the database</td>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/New%20Order.php">New Order.php</a></td>
+    <td>Inserts a new order into the database</td>
+  </tr>
+  <tr>
+    <td><a href="http://localhost/test/test_insert/Fetch%20orders.php">Fetch orders.php</a></td>
+    <td>Fetches all of the orders in the database, similar to employee fetch</td>
+  </tr>
+</table>
+</div>
+</body>
+</html>
