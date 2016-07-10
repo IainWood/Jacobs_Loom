@@ -5,3 +5,7 @@ Any HTML, php, mySQL, C, and other code should be posted here both for reference
 
 Notes:
 If Apache is not launching, go to windows menu, run the program "run" and run "inetmgr". On the right, click the "Stop" button on the server and try again.
+
+
+Useful Links:
+HTML COLOR PICKER: http://www.w3schools.com/colors/colors_picker.asp
