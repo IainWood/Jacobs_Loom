@@ -17,11 +17,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<html>
+<html lang="en">
 <head>
+  <!--Adds the icon to the tab-->
+  <link rel="icon" href="favicon.ico" sizes="16x16">
+</head>
 <title>Order Form</title>
 <link href="CSS/insert.css" rel="stylesheet">
-</head>
 <body>
 <div class="maindiv">
 <!--HTML Form -->
