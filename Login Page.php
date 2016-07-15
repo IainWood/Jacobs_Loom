@@ -50,13 +50,6 @@ function test_input($data){
 		return $data;
 }
 
-/*while($row = mysqli_fetch_array($query)){
-	$username = $row['emp_username'];
-	$password = $row['emp_password'];
-	//echo "<b><a href=\"Fetch Employee.php?id={$row['emp_id']}\">{$full_name}</a></b>";
-	//echo "<br />";
-}*/
-
 $incorrectInfo = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -87,11 +80,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<html>
+<html lang="en">
 <head>
+	<!--Adds the icon to the tab-->
+  	<link rel="icon" href="favicon.ico" sizes="16x16">
+</head>
 <title>Login</title>
 <link href="CSS/login.css" rel="stylesheet">
-</head>
 <body>
 <div class="centered">
 <div class="maindiv">
