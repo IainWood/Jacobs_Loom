@@ -7,7 +7,7 @@
 <link href="clickzoom.css" rel="stylesheet" type="text/css">
 <body>
   <title>Click Zoom</title>
-<img id="myImg" src="C:\\Users\\Marcus Woodburn\\Pictures\\iD Tech\\DSC01415-XL.jpg" alt="Caption goes here" width="300" height="200">
+<img id="myImg" src="C:\\Users\\Marcus Woodburn\\Pictures\\20160511_194632.jpg" onmouseover="this.src='C:\\Users\\Marcus Woodburn\\Pictures\\20160510_141018.jpg'" onmouseout="this.src='C:\\Users\\Marcus Woodburn\\Pictures\\20160511_194632.jpg'"  alt="Caption goes here" width="300" height="200">
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
@@ -19,21 +19,18 @@
 <script>
 // Get the modal
 var modal = document.getElementById('myModal');
-
 // Get the image and insert it inside the modal - use its "alt" text as a caption
 var img = document.getElementById('myImg');
 var modalImg = document.getElementById("img01");
 var captionText = document.getElementById("caption");
 img.onclick = function(){
     modal.style.display = "block";
-    modalImg.src = this.src;
+    modalImg.src = "C:\\Users\\Marcus Woodburn\\Pictures\\20160510_141018.jpg";
     modalImg.alt = this.alt;
     captionText.innerHTML = this.alt;
 }
-
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
-
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
     modal.style.display = "none";
