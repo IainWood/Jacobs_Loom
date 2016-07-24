@@ -18,19 +18,31 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
  * @author Iain Woodburn
  */
 public class ReadCard {
-
-    private static final String url = "jdbc:mysql://localhost:3306/testdb";
+    
+    private static final Dialogue dialogue = new Dialogue();
+    
+    private static final String url = "jdbc:mysql://localhost:3306/myschema";
     private static final String user = "root";
     private static final String password = "J@c0bsl0om";
+    
+    private static String track1 = "";
+    private static String track2 = "";
+    private static String track3 = "";
+    
     static boolean done = false;
     /**
      * @param args the command line arguments
+     * @throws java.lang.InterruptedException
      */
+    @SuppressWarnings("SleepWhileInLoop")
     public static void main(String[] args) throws InterruptedException {
         
-        Dialogue dialogue = new Dialogue();
+        dialogue.pack();
+        dialogue.setLocationRelativeTo(null); //Centers the window
         dialogue.setVisible(true);
-
+        dialogue.toggleError("");
+        
+        
         while(!done)Thread.sleep(1);  /**
                                        * Allows updated file to be used when
                                        * getting card info (stops 
@@ -38,6 +50,10 @@ public class ReadCard {
                                        */
         
         System.out.println(readFromFile());
+        parseTracks(readFromFile());
+        System.out.println("Track 1: " + track1);
+        System.out.println("Track 2: " + track2);
+        System.out.println("Track 3: " + track3);
         
         Connection con = null;
         Statement st = null;
@@ -106,6 +122,7 @@ public class ReadCard {
      * 
      * @return employee card information, not parsed
      */
+    @SuppressWarnings("null")
     private static String readFromFile(){
         //Gets the username of the computer for the file path
         String name = System.getProperty("user.name");
@@ -118,7 +135,7 @@ public class ReadCard {
             filePath = "C:\\Users\\".concat(name).concat("\\Documents\\");
             fileName = "employeeCardInfo.txt";
         }catch (NullPointerException e){
-            e.printStackTrace();
+            dialogue.toggleError("Error reading card, please try again");
         }
 
         try {
@@ -133,21 +150,101 @@ public class ReadCard {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            dialogue.toggleError("Error reading card, please try again");
         } finally {
             try {
                 reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | NullPointerException e) {
+                dialogue.toggleError("Error reading card, please try again");
             }
         }
         //Default, this should never be executed
         return "";
     }
     
-    private static String parseInfo(String rawData){
+    /**
+     * Parses the information found in the card, after
+     * it is decrypted. The format for the raw data is as follows
+     * %track1?;track2?+track3?
+     * 
+     * @param rawData the data, decrypted, from readFromFile()
+     */
+    private static void parseTracks(String rawData){
+        //rawData = %track1?;track2?+track3?   total:
+        //          012345678901234567890123   23  
         
-        return "";
-    }
+        if(rawData != null && !rawData.isEmpty()){
+            
+            int numOfQuestionMarks = 0;
+            
+            for(int i = 0; i < rawData.length(); i++){
+                System.out.println(rawData.charAt(i));
+                    if(rawData.charAt(i) == '?'){
+                        numOfQuestionMarks++;
+                    }
+
+            } //end for
+            
+            if(numOfQuestionMarks == 3){
+            
+                try{
+
+                    int beginT1 = 1;
+                    int endT1 = -1;
+
+                    for(int i = 0; i < rawData.length(); i++){
+                           
+                        if(rawData.charAt(i) == '?'){
+                            endT1 = i;
+                            break;
+                        }
+
+                    }
+
+                    track1 = rawData.substring(beginT1 , endT1);
+
+                    int beginT2 = 1;
+                    int endT2 = -1;
+
+                    rawData = rawData.substring(endT1+1);
+
+                    for(int i = 0; i < rawData.length(); i++){
+
+                        if(rawData.charAt(i) == '?'){
+                            endT2 = i;
+                            break;
+                        }
+
+                    }
+
+                    track2 = rawData.substring(beginT2 , endT2);
+
+                    int beginT3 = 1;
+                    int endT3 = -1;
+
+                    rawData = rawData.substring(endT2+1);
+
+                    for(int i = 0; i < rawData.length(); i++){
+
+                        if(rawData.charAt(i) == '?'){
+                            endT3 = i;
+                            break;
+                        }
+
+                    }
+
+                    track3 = rawData.substring(beginT3 , endT3);
+
+                }catch (Exception e){
+                    dialogue.toggleError("Error reading card, please try again");
+                } //end try-catch
+            
+            }else{
+                dialogue.toggleError("Error reading card, please try again");
+            }
+            
+        } //end if
+        
+    } //end parseTracks
     
 } //end class
