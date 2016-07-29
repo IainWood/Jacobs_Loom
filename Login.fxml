@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="loginpage.LoginPage">
+  <children>
+    <AnchorPane fx:id="background" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" stylesheets="@loginFX.css" VBox.vgrow="ALWAYS">
+      <children>
+            <TextField fx:id="username_field" layoutX="81.0" layoutY="215.0" promptText="username" />
+            <PasswordField fx:id="password_field1" layoutX="81.0" layoutY="261.0" promptText="password" />
+            <Button fx:id="login_button" layoutX="81.0" layoutY="314.0" mnemonicParsing="false" onAction="#loginButton" text="Login" />
+            <Label fx:id="welcome_message" layoutX="81.0" layoutY="58.0" prefHeight="68.0" prefWidth="298.0" text="WELCOME">
+               <font>
+                  <Font name="System Bold" size="47.0" />
+               </font>
+            </Label>
+            <Label layoutX="81.0" layoutY="171.0" text="Please login below" />
+            <Line endX="100.0" layoutX="180.0" layoutY="200.0" startX="-100.0" />
+            <Label fx:id="errorLogin" layoutX="81.0" layoutY="289.0" prefHeight="25.0" prefWidth="280.0" textAlignment="CENTER" textFill="#d01313" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>
