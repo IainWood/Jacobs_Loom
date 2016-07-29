@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="550.0" prefWidth="900.0" stylesheets="@loginFX.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="loginpage.LoginPage">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem fx:id="quit" mnemonicParsing="false" onAction="#close" text="Quit" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <SplitPane fx:id="background" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" stylesheets="@loginFX.css" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane>
+               <children>
+                  <Label fx:id="name" layoutX="14.0" layoutY="14.0" prefHeight="82.0" prefWidth="466.0">
+                     <font>
+                        <Font size="42.0" />
+                     </font>
+                  </Label>
+                  <Line fx:id="line" endX="300.0" layoutX="115.0" layoutY="95.0" startX="-100.0" visible="false" />
+                  <Label fx:id="balanceAmount" layoutX="29.0" layoutY="117.0" prefHeight="25.0" prefWidth="401.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="email" layoutX="29.0" layoutY="151.0" prefHeight="25.0" prefWidth="401.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="phone" layoutX="29.0" layoutY="185.0" prefHeight="25.0" prefWidth="401.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="street1" layoutX="29.0" layoutY="219.0" prefHeight="25.0" prefWidth="401.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="street2" layoutX="29.0" layoutY="253.0" prefHeight="25.0" prefWidth="401.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="city_state_zip" layoutX="29.0" layoutY="287.0" prefHeight="25.0" prefWidth="401.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="click" layoutX="752.0" layoutY="462.0" mnemonicParsing="false" onAction="#fillInfo" text="Load Info" />
+                  <Button fx:id="makeDeposit" layoutX="458.0" layoutY="117.0" mnemonicParsing="false" onAction="#makeDeposit" text="Deposit" visible="false" />
+                  <Button fx:id="close_button" layoutX="832.0" layoutY="462.0" mnemonicParsing="false" onAction="#close" text="Close" />
+                  <Button fx:id="pickupButton" layoutX="29.0" layoutY="358.0" mnemonicParsing="false" onAction="#makePickup" prefHeight="25.0" prefWidth="149.0" text="MAKE A PICKUP" visible="false" />
+                  <Pane fx:id="deposit_pane" layoutX="249.0" layoutY="106.0" prefHeight="264.0" prefWidth="338.0" stylesheets="@loginFX.css">
+                     <children>
+                        <Button layoutX="83.0" layoutY="212.0" mnemonicParsing="false" onAction="#deposit" text="Deposit" />
+                        <Button fx:id="cancel_deposit" layoutX="182.0" layoutY="212.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
+                        <Label alignment="CENTER" layoutX="21.0" layoutY="12.0" prefHeight="56.0" prefWidth="291.0" text="Deposit">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="amountToDeposit" layoutX="21.0" layoutY="120.0" promptText="Amount" />
+                        <TextField fx:id="confirmAmount" layoutX="21.0" layoutY="163.0" promptText="Confirm Amount" />
+                        <Label fx:id="errorLabelDeposit" alignment="CENTER" layoutX="46.0" layoutY="92.0" prefHeight="17.0" prefWidth="243.0">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="pickup_pane" layoutX="195.0" layoutY="67.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="348.0" prefWidth="507.0" stylesheets="@loginFX.css" visible="false" AnchorPane.bottomAnchor="86.0" AnchorPane.leftAnchor="196.0" AnchorPane.rightAnchor="196.0" AnchorPane.topAnchor="67.0">
+                     <children>
+                        <Button fx:id="cancel_pickup" layoutX="440.0" layoutY="309.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
+                        <Label alignment="CENTER" layoutX="66.0" layoutY="3.0" prefHeight="56.0" prefWidth="368.0" text="Pickup">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <TextField layoutX="30.0" layoutY="149.0" promptText="Number of Products" />
+                        <MenuButton layoutX="30.0" layoutY="95.0" mnemonicParsing="false" text="Product">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Headband" />
+                            <MenuItem mnemonicParsing="false" text="Scarf" />
+                              <MenuItem mnemonicParsing="false" text="Beanie" />
+                              <MenuItem mnemonicParsing="false" text="Coffee Cozy" />
+                          </items>
+                        </MenuButton>
+                     </children>
+                  </Pane>
+               </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Jacob's Loom" HBox.hgrow="ALWAYS">
+          <font>
+            <Font size="11.0" fx:id="x3" />
+          </font>
+          <textFill>
+            <Color blue="0.625" green="0.625" red="0.625" fx:id="x4" />
+          </textFill>
+        </Label>
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>
