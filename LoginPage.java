@@ -24,7 +24,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -42,7 +46,6 @@ public class LoginPage extends Application {
     private FXMLLoader loader;
     
     //FXML fx:id
-    @FXML private Label welcome_message;
     @FXML private TextField username_field;
     @FXML private PasswordField password_field1;
     @FXML private Label errorLogin;
@@ -63,6 +66,13 @@ public class LoginPage extends Application {
     @FXML private Button makeDeposit;
     @FXML private Button pickupButton;
     @FXML private Label errorLabelDeposit;
+    @FXML private ChoiceBox product_menu;
+    @FXML private ChoiceBox primary_color_menu;
+    @FXML private ChoiceBox secondary_color_menu;
+    
+    private boolean window1open = true;
+    private boolean window2open = false;
+    private boolean window3open = false;
     
     //For mySQL
     Connection myConn;
@@ -107,6 +117,16 @@ public class LoginPage extends Application {
         launch(args);
     }
     
+    @FXML
+    private void initialize(){
+        if(window3open){
+            ObservableList<String> primaryColors = FXCollections.observableArrayList("Honolulu Pink","Fort Worth Blue","Green Bay Green");
+        
+            primary_color_menu.setItems(primaryColors);
+            primary_color_menu.setValue("Primary Color");
+        }
+    }
+    
     /**
      * Gets a connection to the database
      */
@@ -128,6 +148,9 @@ public class LoginPage extends Application {
      */
     @FXML
     public void fillInfo(ActionEvent evt){
+        
+        DecimalFormat df = new DecimalFormat("#.00");
+        
         String emp_id = "'".concat("1".concat("'"));
         String emp_first_name = "";
         String emp_last_name = "";
@@ -165,7 +188,7 @@ public class LoginPage extends Application {
             }
             
             name.setText(emp_first_name + " " + emp_last_name);
-            balanceAmount.setText("Current Balance: " + emp_balance);
+            balanceAmount.setText("Current Balance: $" + df.format(Double.valueOf(emp_balance)));
             email.setText("Email: " + emp_email);
             phone.setText("Phone: " + emp_phone);
             street1.setText("Address: " + emp_street_address1);
@@ -185,7 +208,7 @@ public class LoginPage extends Application {
         line.setVisible(true);
         makeDeposit.setVisible(true);
         pickupButton.setVisible(true);
-    }
+    } //end setElementsVisible
     
     /**
      * Makes the deposit pane visible
@@ -194,7 +217,7 @@ public class LoginPage extends Application {
     @FXML
     public void makeDeposit(ActionEvent evt){
         deposit_pane.setVisible(true);
-    }
+    } //end makeDeposit
     
     /**
      * Makes the pickup pane visible
@@ -203,7 +226,7 @@ public class LoginPage extends Application {
     @FXML
     public void makePickup(ActionEvent evt){
         pickup_pane.setVisible(true);
-    }
+    } //end makePickup
     
     /**
      * Makes all of the panels invisible
@@ -213,7 +236,7 @@ public class LoginPage extends Application {
     public void cancel(ActionEvent evt){
         deposit_pane.setVisible(false);
         pickup_pane.setVisible(false);
-    }
+    } //end cancel
     
     /**
      * Changes the users balance
@@ -221,16 +244,39 @@ public class LoginPage extends Application {
      */
     @FXML
     public void deposit(ActionEvent evt){
-        String amount = amountToDeposit.getText();
-        String confirm = confirmAmount.getText();
+        String amount = amountToDeposit.getText().trim();
+        String confirm = confirmAmount.getText().trim();
+        String emp_balance = "";
         
-        if(!amount.equals(confirm)){
+        
+        //Amounts must be equal and above 0
+        if(!amount.equals(confirm) && Double.valueOf(amount) > 0 ){
             errorLabelDeposit.setText("The amounts do not match!");
         } else {
-            
+            try {
+                String emp_id = "'".concat("1".concat("'"));
+                myRs = myStatement.executeQuery("SELECT * FROM employees WHERE emp_id=" + emp_id);
+                
+                //Gets the current balance of the user
+                while(myRs.next()){
+                    emp_balance = myRs.getString("emp_balance");
+                }
+                
+                //Adds the new and old together
+                amount = Double.toString(Double.valueOf(amount) + Double.valueOf(emp_balance));
+                //Updates the database, not the label, the user is responsible for refreshing the window
+                myStatement.executeUpdate("UPDATE employees SET emp_balance='" + amount + "' WHERE emp_id=" + emp_id);
+                
+                //Closes the pane and error message once the update is complete
+                errorLabelDeposit.setVisible(false);
+                deposit_pane.setVisible(false);
+            } catch (SQLException | NumberFormatException | NullPointerException ex) {
+                errorLabelDeposit.setText("There was an error, please try again");
+                Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
-    }
+    } //end deposit
     
     /**
      * Quits the program
@@ -239,7 +285,7 @@ public class LoginPage extends Application {
     @FXML
     public void close(ActionEvent evt){
         System.exit(0);
-    }
+    } //end close
     
     /**
      * Encrypts a string, using seed keyword "password"
@@ -253,7 +299,7 @@ public class LoginPage extends Application {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(seed);
         return encryptor.encrypt(rawString);
-    }
+    } //end encrypt
     
     /**
      * Decrypts the string AFTER is is read from the file by the method 'readFromFile'
@@ -269,7 +315,7 @@ public class LoginPage extends Application {
         
         //Decrypts and returns the raw string
         return decryptor.decrypt(encryptedString);
-    }
+    } //end decrypt
     
     /**
      * Writes the employee's information to a file
@@ -294,7 +340,7 @@ public class LoginPage extends Application {
         
         return false;
         
-    }
+    } //end writeToFile
     
     /**
      * Reads the employee's card
@@ -325,9 +371,6 @@ public class LoginPage extends Application {
             
             //Seperates the information into three tracks
             parseTracks(readFromFile());
-            System.out.println("Track 1: " + track1);
-            System.out.println("Track 2: " + track2);
-            System.out.println("Track 3: " + track3);
             
             //Closes the window
             //primaryStage.close();
@@ -338,14 +381,13 @@ public class LoginPage extends Application {
             primaryStage.setTitle("Employee Information");
             primaryStage.setScene(scene);
             primaryStage.show();
-            System.out.println(root);
-            System.out.println(scene);
-            System.out.println(primaryStage);
+            window2open = false;
+            window3open = true;
         } catch (IOException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
         }
             
-    }   
+    } //readCardButton
     
     /**
      * Makes an error message appear if the input is invalid
@@ -355,7 +397,7 @@ public class LoginPage extends Application {
     public void toggleError(String errMessage){
         errorLabel.setText(errMessage);
         errorLabel.setVisible(true);
-    }
+    } //end toggleError
     
     /**
      * Tests if the input is valid
@@ -416,7 +458,7 @@ public class LoginPage extends Application {
         }
         //Default, this should never be executed
         return "";
-    }
+    } //readFromFile
     
     /**
      * Parses the information found in the card, after
@@ -539,9 +581,8 @@ public class LoginPage extends Application {
                 primaryStage.setTitle("Card Reader");
                 primaryStage.setScene(scene);
                 primaryStage.show();
-                System.out.println(root);
-                System.out.println(scene);
-                System.out.println(primaryStage);
+                window2open = true;
+                window1open = false;
             } else {
                 errorLogin.setText("Username or password was incorrect");
             }
