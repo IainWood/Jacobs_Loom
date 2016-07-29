@@ -24,11 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <html>
 <head>
-<title>New Employee Form</title>
+<title>Create Account</title>
+<link rel="icon" href="favicon.ico" sizes="16x16">
 <link href="CSS/insert.css" rel="stylesheet">
 </head>
 <body>
-<div class="maindiv">
 <!--HTML Form -->
 <div class="form_div">
 <div class="title"></div>
@@ -235,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <label>City:</label>
 <span class="error">* <?php echo $cityErr;?></span>
 <input class="input" name="city" type="text" value"">
-<select name="state" id="state" value""> <!--List of states including District of Columbia-->
+<select name="state" id="state" value""> <!--List of states including District of Columbia, but not territories-->
   <option value=" " label="STATE" selected disabled>(State)</option>
 	<option value="AL">Alabama</option>
 	<option value="AK">Alaska</option>
@@ -298,7 +298,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <input class="submit" name="submit" type="submit" value="Submit">
 </form>
 </div>
-</div>
 </body>
 </html>
 
@@ -333,6 +332,7 @@ $sql_create_table = "
 	emp_city varchar(255) NOT NULL,
 	emp_state varchar(255) NOT NULL,
 	emp_zip varchar(255) NOT NULL,
+	emp_balance int(10) DEFAULT NULL,
 	PRIMARY KEY (emp_id)
 )";
 
@@ -432,14 +432,16 @@ if(isset($_POST['submit'])){ //Fetching variables of the form which travels in U
 	$first_name = test_input($_POST['fname']); //Assigns the form values to variables to use
 	$middle_name = test_input($_POST['mname']);
 	$last_name = test_input($_POST['lname']);
-	$username = strtolower($first_name[0].$last_name);
+	$username = strtolower($first_name[0].$last_name); //. is concat operator
 	if(isset($_POST['dob-day']) && isset($_POST['dob-month']) && isset($_POST['dob-year'])){
 		$birth_day = test_input($_POST['dob-day']); //Don't know why, but this prevent a php error from being thrown when a field is left blank
 		$birth_month = test_input($_POST['dob-month']);
 		$birth_year = test_input($_POST['dob-year']);
 	}
-	//hashes the password with salt Tested and it works, should consider converting to server-side hash
+	//hashes the password with salt; tested and it works, should consider converting to server-side hash
 	$password = password_hash($_POST['password'] , PASSWORD_BCRYPT);
+	$password = substr($password , 3);
+	$password = "$2a".$password; //Changes the salt version of the hash, so it can be compared in Java's BCRYPT
 	$email = test_input($_POST['email']);
 	$phone = test_input($_POST['phone']);
 	$address_1 = test_input($_POST['address1']);
@@ -449,15 +451,16 @@ if(isset($_POST['submit'])){ //Fetching variables of the form which travels in U
 		$state = test_input($_POST['state']);
 	}
 	$zip = test_input($_POST['zip']);
+	$balance = 0;
 
 
 
 	if(!empty($first_name) && !empty($last_name) && !empty($email) && !empty($phone) && !empty($address_1) && !empty($city) && !empty($zip)){
 		$sql_insert = "INSERT INTO employees(emp_first_name, emp_middle_name, emp_last_name, emp_username, emp_password,
 																				 emp_day_OB, emp_month_OB, emp_year_OB, emp_email, emp_phone, emp_street_address1,
-																				 emp_street_address2, emp_city, emp_state, emp_zip)
+																				 emp_street_address2, emp_city, emp_state, emp_zip, emp_balance)
 									 VALUES ('$first_name', '$middle_name', '$last_name', '$username', '$password', '$birth_day', '$birth_month',
-										 			 '$birth_year', '$email', '$phone', '$address_1', '$address_2', '$city', '$state', '$zip');";
+										 			 '$birth_year', '$email', '$phone', '$address_1', '$address_2', '$city', '$state', '$zip', '$balance');";
 		if(mysqli_query($conn , $sql_insert) == TRUE){
 			//If successful, prints nothing, else, prints error
 		}else{
