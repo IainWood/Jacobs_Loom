@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="loginpage.LoginPage">
+  <children>
+    <AnchorPane fx:id="background" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" stylesheets="@loginFX.css" VBox.vgrow="ALWAYS">
+         <children>
+            <PasswordField fx:id="password_field2" layoutX="246.0" layoutY="188.0" />
+            <Label alignment="TOP_CENTER" layoutX="149.0" layoutY="57.0" prefHeight="54.0" prefWidth="344.0" text="Swipe Card" textAlignment="CENTER" textFill="#294680">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Button fx:id="readCardButton" defaultButton="true" layoutX="270.0" layoutY="241.0" mnemonicParsing="false" onAction="#readCardButton" prefHeight="37.0" prefWidth="101.0" text="Read Card" />
+            <Label fx:id="errorLabel" layoutX="228.0" layoutY="156.0" prefHeight="17.0" prefWidth="208.0" textFill="#b20808" />
+         </children>
+    </AnchorPane>
+  </children>
+  <stylesheets>
+    <URL value="@../../../../../Card_Reader/BasicApplication.css" />
+  </stylesheets>
+</VBox>
