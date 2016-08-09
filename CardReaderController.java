@@ -6,6 +6,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -27,14 +36,20 @@ public class CardReaderController {
     @FXML private PasswordField password_field2;
     @FXML private Label errorLabel;
     
-    private static String track1 = "";
-    private static String track2 = "";
-    private static String track3 = "";
+    //For mySQL
+    private Connection myConn;
+    private Statement myStatement;
+    private Statement myStatement2;
+    private ResultSet myRs;
+    private static final String URL = "jdbc:mysql://localhost:3306/new_schema?autoReconnect=true&useSSL=false";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "J@c0bsl0om";
     
-    @FXML
-    private void initialize(){
-        
-    }
+    private static final Integer EMP_FORMATTER = 1000000;
+    
+    public static String track1 = "";
+    public static String track2 = "";
+    public static String track3 = "";
     
     /**
      * Reads the employee's card
@@ -43,10 +58,10 @@ public class CardReaderController {
      * @param evt - click of the Read Card button, is automatically
      */
     @FXML
-    public void readCardButton(ActionEvent evt){
+    private void readCardButton(ActionEvent evt){
 
         try {
-            String filePath = "C:\\Users\\Marcus Woodburn\\Documents\\";
+            String filePath = "C:\\Users\\Marcus Woodburn\\Documents\\Jacob's Loom\\";
             String fileName = "employeeCardInfo.txt";
             
             //Gets the string from the password box
@@ -66,8 +81,11 @@ public class CardReaderController {
                 //Seperates the information into three tracks
                 parseTracks(readFromFile());
 
+                //Records the swipe in the logs
+                logData();
+                
                 //Loads next window
-                Stage primaryStage = LoginPage.primaryStage;
+                Stage primaryStage = LoginPageController.primaryStage;
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("EmployeeInfo.fxml"));
                 loader.load();
 
@@ -80,17 +98,97 @@ public class CardReaderController {
             } //end if
             
         } catch (IOException ex) {
-            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LoginPageController.class.getName()).log(Level.SEVERE, null, ex);
         }
             
     } //readCardButton
+    
+    /**
+     * Gets a connection to the database
+     */
+    private void getConnectionToDB(){
+        
+        try {
+            myConn = DriverManager.getConnection(URL, USERNAME , PASSWORD);
+            //Creates a statement
+            myStatement = myConn.createStatement();
+            myStatement2 = myConn.createStatement();
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginPageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    } //end getConnectionToDB
+    
+    /**
+     * Writes the time of the swipe, the card holders name, and the date
+     */
+    @SuppressWarnings("ConvertToTryWithResources")
+    private void logData(){
+        
+        try{
+            
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            String date = dateFormat.format(calendar.getTime());
+            
+            //Gets a connection to the database
+            getConnectionToDB();
+            
+            String name = "";
+            String user = DataSharer.getUsername();
+            
+            try {
+                String firstName = "";
+                String lastName = "";
+                
+                //Will get the employee who matches the card that was just swiped
+                myRs = myStatement.executeQuery("SELECT * FROM employees WHERE emp_id='" + "1" + "'");
+                
+                while(myRs.next()){
+                    firstName = myRs.getString("emp_first_name");
+                    lastName = myRs.getString("emp_last_name");
+                }
+                
+                name = lastName + ", " + firstName + "\t\tEmployee ID: " + (EMP_FORMATTER + Integer.parseInt(track1));
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(CardReaderController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            File file = new File("C:\\Users\\Marcus Woodburn\\Documents\\Jacob's Loom\\Card Reader Log.txt");
+            
+            if(!file.exists()){
+                file.createNewFile();
+            }
+            
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            if(!name.isEmpty() && !date.isEmpty() && !user.isEmpty()){
+                bw.write("User: " + user);
+                bw.newLine();
+                bw.write(name);
+                bw.newLine();
+                bw.write(date);
+                bw.newLine();
+            } else {
+                //Causes the error message to toggle
+                throw new IOException();
+            }
+            bw.close();
+            
+        } catch (IOException e){
+            toggleError("ERROR: Please try again");
+        }
+        
+    } //end logData
     
     /**
      * Makes an error message appear if the input is invalid
      * 
      * @param errMessage - the error message to be displayed
      */
-    public void toggleError(String errMessage){
+    private void toggleError(String errMessage){
         errorLabel.setText(errMessage);
         errorLabel.setVisible(true);
     } //end toggleError
@@ -118,8 +216,8 @@ public class CardReaderController {
      * @return the encrypted string
      */
     private String encrypt(String rawString){
-        
-        String seed = "password";
+        //Seed used to decrypt must match this
+        String seed = "enigma";
         
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(seed);
@@ -133,7 +231,7 @@ public class CardReaderController {
      */
     private String decrypt(String encryptedString){
         //Seed must be same as what was used to encrypt origially
-        String seed = "password";
+        String seed = "enigma";
         
         StandardPBEStringEncryptor decryptor = new StandardPBEStringEncryptor();
         decryptor.setPassword(seed);
@@ -181,7 +279,7 @@ public class CardReaderController {
         
         try{
             //Use concat for error handeling
-            filePath = "C:\\Users\\".concat(computerName).concat("\\Documents\\");
+            filePath = "C:\\Users\\".concat(computerName).concat("\\Documents\\Jacob's Loom\\");
             fileName = "employeeCardInfo.txt";
         }catch (NullPointerException e){
             toggleError("Error reading card, please try again");
@@ -249,7 +347,8 @@ public class CardReaderController {
                     }
 
                     track1 = rawData.substring(beginT1 , endT1);
-
+                    DataSharer.setTrack1(track1);
+                    
                     int beginT2 = 1;
                     int endT2 = -1;
 
@@ -265,6 +364,7 @@ public class CardReaderController {
                     }
 
                     track2 = rawData.substring(beginT2 , endT2);
+                    DataSharer.setTrack2(track2);
 
                     int beginT3 = 1;
                     int endT3 = -1;
@@ -281,6 +381,7 @@ public class CardReaderController {
                     }
 
                     track3 = rawData.substring(beginT3 , endT3);
+                    DataSharer.setTrack3(track3);
 
                 }catch (Exception e){
                     toggleError("Error reading card, please try again");
